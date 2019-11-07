@@ -1,4 +1,4 @@
 def show():
-    import main_window_core
-    reload(main_window_core)
-    main_window_core.show()
+    import main_window
+    reload(main_window)
+    main_window.show()

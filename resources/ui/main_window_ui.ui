@@ -1,78 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>win_mayaGameFbxExporter</class>
- <widget class="QMainWindow" name="win_mayaGameFbxExporter">
+ <class>win_maya_game_fbx_exporter</class>
+ <widget class="QMainWindow" name="win_maya_game_fbx_exporter">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1085</width>
-    <height>1092</height>
+    <width>598</width>
+    <height>529</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Maya Game Fbx Exporter</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QGroupBox" name="grpAnim">
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QLabel" name="lbl_character_root">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Character Root:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="cb_character_list">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="editable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::MinimumExpanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="grp_export">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title">
+       <string>Export Options</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QCheckBox" name="chk_root_no_parent">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Will Unparent if needed</string>
+         </property>
+         <property name="text">
+          <string>Ensure Root Joint Have Not Parent</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="grp_anim">
       <property name="title">
        <string>Animation Options</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <item>
-          <widget class="QLabel" name="lblCharacterRoot">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Character Root:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="cbCharacterList">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="editable">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::MinimumExpanding</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QCheckBox" name="chkUseClip">
+            <widget class="QCheckBox" name="chk_use_clip">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -86,6 +124,9 @@
            </item>
            <item>
             <widget class="QGroupBox" name="grp_animOptions">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
                <horstretch>0</horstretch>
@@ -108,7 +149,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QRadioButton" name="rdoTimeSlider">
+                 <widget class="QRadioButton" name="rdo_time_slider">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -127,7 +168,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QRadioButton" name="rdoTimeStartEnd">
+                 <widget class="QRadioButton" name="rdo_time_start_end">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -160,7 +201,7 @@
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_2">
                 <item>
-                 <widget class="QLabel" name="lblStartEnd">
+                 <widget class="QLabel" name="lbl_time">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                     <horstretch>0</horstretch>
@@ -179,7 +220,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit">
+                 <widget class="QLineEdit" name="le_start">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -189,7 +230,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit_2">
+                 <widget class="QLineEdit" name="le_end">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -224,7 +265,13 @@
         </layout>
        </item>
        <item>
-        <widget class="QTableWidget" name="tableWidget">
+        <widget class="QTableWidget" name="tbl_subanims">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="showDropIndicator" stdset="0">
           <bool>true</bool>
          </property>
@@ -269,14 +316,14 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="btn_add_subanim">
            <property name="text">
             <string>Add SubAnim</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_2">
+          <widget class="QPushButton" name="btn_remove_subanim">
            <property name="text">
             <string>Remove SubAnim</string>
            </property>
@@ -290,6 +337,60 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>598</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="action_sel_data_network"/>
+    <addaction name="separator"/>
+    <addaction name="action_tag_root"/>
+    <addaction name="action_tag_sk"/>
+    <addaction name="separator"/>
+   </widget>
+   <addaction name="menuTools"/>
+  </widget>
+  <action name="action_tag_sk">
+   <property name="text">
+    <string>Tag Selection As Skeletal Mesh</string>
+   </property>
+   <property name="toolTip">
+    <string>Tag mesh of a character for animation export.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_tag_root">
+   <property name="text">
+    <string>Tag Selection As Root Joint</string>
+   </property>
+   <property name="toolTip">
+    <string>Tag a joint as the root hierarchy of a character for animation export</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="action_sel_data_network">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Select Data Network</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

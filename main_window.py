@@ -31,9 +31,15 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
 
         self.setWindowTitle(window_name)
 
+        # Base state of certain ui element
+        self.ui.tbl_subanims.setEnabled(False)
+
+        # Signal connections
         self.ui.action_tag_root.triggered.connect(self.trig_action_tag_root)
         self.ui.action_tag_sk.triggered.connect(self.trig_action_tag_sk)
         self.ui.action_sel_data_network.triggered.connect(self.trig_action_select_data_network)
+        self.ui.rdo_time_slider.toggled.connect(self.toggle_time_range)
+        self.ui.chk_use_clip.toggled.connect(self.toggle_use_clip)
 
     #
     ## Ui connection function
@@ -59,6 +65,36 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
         :return:
         """
         pymel.select(exporter_core.GameFbxExporterCore.get_data_network())
+
+    def toggle_time_range(self, checked):
+        """
+        Activate when time type radio button is changed. It will turn on/off start/end field
+        :return:
+        """
+
+        if not checked:
+            self.ui.le_start.setEnabled(False)
+            self.ui.le_end.setEnabled(False)
+        else:
+            self.ui.le_start.setEnabled(True)
+            self.ui.le_end.setEnabled(True)
+
+    def toggle_use_clip(self, checked):
+        """
+        Activate when use clip checkbox is change. It will turn on/of the subanim table and time range field
+        :return:
+        """
+
+        if checked:
+            self.ui.tbl_subanims.setEnabled(True)
+            self.ui.grp_anim_time.setEnabled(False)
+            self.ui.btn_add_subanim.setEnabled(False)
+            self.ui.btn_remove_subanim.setEnabled(False)
+        else:
+            self.ui.tbl_subanims.setEnabled(False)
+            self.ui.grp_anim_time.setEnabled(True)
+            self.ui.btn_add_subanim.setEnabled(True)
+            self.ui.btn_remove_subanim.setEnabled(True)
 
 
 def show():

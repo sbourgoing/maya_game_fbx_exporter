@@ -4,7 +4,12 @@ from maya import OpenMaya
 import maya.OpenMayaUI as omui
 import logging
 from maya_game_fbx_exporter.vendor import libSerialization
+reload(libSerialization)
+import character_data_node
+reload(character_data_node)
 from character_data_node import CharacterDataNode
+import animation_data_node
+reload(animation_data_node)
 from animation_data_node import AnimationDataNode
 
 log = logging.getLogger('maya_game_fbx_exporter')
@@ -25,15 +30,14 @@ class GameFbxExporterCore(object):
         :return: The new CharacterDataNode
         """
 
-        new_char = None
-
         # Ensure the root is not already used by another character
         for char in self.character_nodes:
             if char.root_node == root_node:
-                log.error('Root node {0} is already used by another character {1}. Please choose another root node')
+                log.error('Root node {0} is already used by another character {1}. '
+                          'Please choose another root node'.format(root_node, char.character_name))
                 return None
             if char.character_name == name:
-                log.error('Character named {0} already exist. Please choose another name')
+                log.error('Character named {0} already exist. Please choose another name'.format(name))
                 return None
 
         new_char = CharacterDataNode()
@@ -88,8 +92,8 @@ class GameFbxExporterCore(object):
             network = data_node._network
             if network and network.exists():
                 pymel.delete(network)
-            if network.is_valid():
-                libSerialization.export_network(network)
+            if data_node.is_valid():
+                libSerialization.export_network(data_node)
         except AttributeError:
             pass
 

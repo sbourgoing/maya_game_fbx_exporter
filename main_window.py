@@ -2,12 +2,12 @@ import pymel.core as pymel
 import maya.OpenMayaUI as omui
 import logging
 
-from maya_game_fbx_exporter.core import exporter_core
+from core import exporter_core
 
 reload(exporter_core)
 from ui import main_window_ui
 reload(main_window_ui)
-from vendor.Qt import QtWidgets, QtCompat
+from vendor.Qt import QtWidgets, QtCompat, QtGui
 
 log = logging.getLogger('maya_game_fbx_exporter')
 gui = None
@@ -25,6 +25,10 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(GameFbxExporterUi, self).__init__()
 
+        self.cur_char = None # Current selected character information
+
+        self._no_cb_char_update = False # Flag to prevent char combo box index change signal to update ui
+
         self.ui = main_window_ui.Ui_win_maya_game_fbx_exporter()
         self.ui.setupUi(self)
 
@@ -36,35 +40,57 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
         # Signal connections
         self.ui.action_sel_data_network.triggered.connect(self.trig_action_select_data_network)
         self.ui.rdo_time_slider.toggled.connect(self.toggle_time_range)
-        self.ui.chk_use_clip.toggled.connect(self.toggle_use_clip)
-        self.ui.btn_add_new_char.pressed.connect(self.press_add_new_char)
+        self.ui.cb_character_list.currentIndexChanged.connect(self.index_change_current_character)
 
-        self.core = exporter_core.GameFbxExporterCore()
-        self.core.load_all_data_network()
+        # Animation Tab
+        self.ui.chk_use_clip.toggled.connect(self.toggle_use_clip)
+
+        # Character Tab
+        self.ui.btn_add_new_char.clicked.connect(self.clicked_add_new_char)
+        self.ui.btn_set_name.clicked.connect(self.clicked_set_name)
+        self.ui.btn_set_root.clicked.connect(self.clicked_set_selected_as_root)
+        self.ui.btn_select_root.clicked.connect(self.clicked_select_current_root)
+        self.ui.btn_add_sk.clicked.connect(self.clicked_add_selected_as_skel_mesh)
+        self.ui.btn_remove_sk.clicked.connect(self.clicked_remove_list_selected_as_skel_mesh)
+        self.ui.btn_sel_all_sk.clicked.connect(self.clicked_select_all_skel_mesh)
+
+        # Core init
+        self._core = exporter_core.GameFbxExporterCore()
+        self._core.load_all_data_network()
         self.update_ui()
 
-    def update_ui(self, char_index=0):
+    def update_ui(self, char_index=0, clear=True):
         """
         Update the ui with the information found in the scene
 
         :param char_index: Index of the character selected in the list. Will be used to update the info
+        :param clear: Do we want to clear and reset the list or just change the index ?
         """
 
-        # Index of the combo box will match the order of the character
-        self.ui.cb_character_list.clear()
+        self._no_cb_char_update = True
 
-        if self.core.character_nodes:
-            for char in self.core.character_nodes:
-                self.ui.cb_character_list.addItem(char.character_name)
-            self.ui.cb_character_list.setCurrentIndex(char_index)
-            self.ui.cb_character_list.setEnabled(True)
+        if clear:
+            # Index of the combo box will match the order of the character
+            self.ui.cb_character_list.clear()
+
+            # If we have data, update the list with it, else, just deactivate it
+            if self._core.character_nodes:
+                for char in self._core.character_nodes:
+                    self.ui.cb_character_list.addItem(char.character_name)
+                self.ui.cb_character_list.setCurrentIndex(char_index)
+                self.ui.cb_character_list.setEnabled(True)
+                self.update_ui_character(True, char_index)
+                self.update_ui_animation(True, char_index)
+            else:
+                self.ui.cb_character_list.addItem('No Character Found')
+                self.ui.cb_character_list.setEnabled(False)
+                self.update_ui_character(False, char_index)
+                self.update_ui_animation(False, char_index)
+        else:
             self.update_ui_character(True, char_index)
             self.update_ui_animation(True, char_index)
-        else:
-            self.ui.cb_character_list.addItem('No Character Found')
-            self.ui.cb_character_list.setEnabled(False)
-            self.update_ui_character(False)
-            self.update_ui_animation(False)
+
+        self._no_cb_char_update = False
 
     def update_ui_character(self, is_valid, char_index=0):
         """
@@ -74,21 +100,21 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
         :param char_index: Index of the character selected in the list. Will be used to update the info
         """
 
+        #TODO - Improve perf with preventing update when not needed
+
         # Clear old ui element value
         update_data = False
         self.ui.le_char_name.setText('')
         self.ui.le_root_name.setText('No Root Set')
         self.ui.lst_sk.clear()
+        self.cur_char = None
 
         # If the node is referenced, prevent the user to modified the current character
-        cur_char = None
         if is_valid:
-            cur_char = self.core.character_nodes[char_index]
+            self.cur_char = self._core.character_nodes[char_index]
             update_data = True
-            if cur_char._network.isReferenced():
+            if self.cur_char._network.isReferenced():
                 is_valid = False
-
-        if is_valid:
             # Enable Ui Element
             self.ui.lbl_edit_char_name.setEnabled(True)
             self.ui.le_char_name.setEnabled(True)
@@ -115,11 +141,11 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
             self.ui.btn_sel_all_sk.setEnabled(False)
             self.ui.lst_sk.setEnabled(False)
 
-        if update_data and cur_char:
+        if update_data and self.cur_char:
             # Now set the good values
-            self.ui.le_char_name.setText(cur_char.character_name)
-            self.ui.le_root_name.setText(cur_char.root_node.name())
-            for sk in cur_char.skeletal_meshes:
+            self.ui.le_char_name.setText(self.cur_char.character_name)
+            self.ui.le_root_name.setText(self.cur_char.root_node.name())
+            for sk in self.cur_char.skeletal_meshes:
                 self.ui.lst_sk.addItem(sk.name())
 
     def update_ui_animation(self, is_valid, char_index=0):
@@ -135,13 +161,50 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
         else:
             self.ui.grp_anim.setEnabled(False)
 
+    def set_char_name(self, new_char=False):
+        """
+        Ask the user for a character name and do some validation over it
+
+        :param new_char: Is the name set for a new character ?
+        :return: The new name or none if invalid
+        """
+        new_char_name = None
+        user_input, clicked = QtWidgets.\
+            QInputDialog().getText(self, 'Change Character Name' if not new_char else "Choose Character Name",
+                                                                "Name:",
+                                                                QtWidgets.QLineEdit.Normal,
+                                                                '' if not self.cur_char or new_char else self.cur_char.character_name)
+        if user_input and clicked:
+            new_char_name = user_input
+            for char in self._core.character_nodes:
+                if new_char and char.character_name == new_char_name:
+                    log.error('Character named {0} already exist. Please choose another name'.format(new_char_name))
+                    break
+                if not new_char and self.cur_char != char and char.character_name == new_char_name:
+                    log.error('Character named {0} already exist. Please choose another name'.format(new_char_name))
+                    break
+
+        return new_char_name
+
     #
     ## Ui connection function
     #
 
-    def press_add_new_char(self):
+    def index_change_current_character(self, new_index):
         """
-        Activate when the button add new character is pressed. It will setup a new character data in the scene
+        Activate when the character drop down list index change. Do the character switch and update the ui
+
+        :param new_index: The new character index changed for
+        """
+        if not self._no_cb_char_update:
+            self.update_ui(new_index, clear=False)
+
+
+    # Character Tab ui elements signal functions
+
+    def clicked_add_new_char(self):
+        """
+        Activate when the button add new character is clicked. It will setup a new character data in the scene
         :return:
         """
 
@@ -157,31 +220,51 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
 
         root = pymel.selected()[0]
 
-        result = pymel.promptDialog(
-            title='Name the new character',
-            message='Enter Name:',
-            button=['OK', 'Cancel'],
-            defaultButton='OK',
-            cancelButton='Cancel',
-            dismissString='Cancel')
+        new_char_name = self.set_char_name(new_char=True)
 
-        if result == 'OK':
-            new_char_name = pymel.promptDialog(query=True, text=True)
-            for char in self.core.character_nodes:
-                if char.character_name == new_char_name:
-                    log.error('Character named {0} already exist. Please choose another name')
-                    return
-            new_char = self.core.setup_new_character(new_char_name, root)
-            self.update_ui(len(self.core.character_nodes) - 1)
+        if new_char_name:
+            new_char = self._core.setup_new_character(new_char_name, root)
+            # self.ui.cb_character_list.setCurrentIndex(len(self._core.character_nodes) - 1)
+            self.update_ui(len(self._core.character_nodes) - 1)
 
+    def clicked_set_name(self):
+        """
+        Set the name of the current selected character
 
+        :return:
+        """
+
+        new_name = self.set_char_name()
+
+        if new_name:
+            self.cur_char.character_name = new_name
+            self._core.save_data_network(self.cur_char)
+            self.update_ui(self.ui.cb_character_list.currentIndex())
+
+    def clicked_set_selected_as_root(self):
+        raise NotImplementedError()
+
+    def clicked_select_current_root(self):
+        raise NotImplementedError()
+
+    def clicked_add_selected_as_skel_mesh(self):
+        raise NotImplementedError()
+
+    def clicked_remove_list_selected_as_skel_mesh(self):
+        raise NotImplementedError()
+
+    def clicked_select_all_skel_mesh(self):
+        raise NotImplementedError()
+
+    # Action signal functions
     def trig_action_select_data_network(self):
         """
         Activate when the menu bar tag skeletal mesh is triggered.
         :return:
         """
-        pymel.select(self.core.find_data_network())
+        pymel.select(self._core.find_data_network())
 
+    # Animation Tab ui elements signal functions
     def toggle_time_range(self, checked):
         """
         Activate when time type radio button is changed. It will turn on/off start/end field

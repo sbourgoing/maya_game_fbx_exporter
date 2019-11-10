@@ -50,6 +50,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="btn_remove_char">
+        <property name="text">
+         <string>Remove Charatcer</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer_3">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -113,7 +120,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="le_char_name"/>
+           <widget class="QLineEdit" name="le_char_name">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QPushButton" name="btn_set_name">
@@ -180,7 +191,7 @@
              <item>
               <widget class="QPushButton" name="btn_remove_sk">
                <property name="text">
-                <string>Remove Skeletal Mesh</string>
+                <string>Remove List Selection Skeletal Mesh</string>
                </property>
               </widget>
              </item>

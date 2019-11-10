@@ -42,12 +42,12 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
         self.ui.rdo_time_slider.toggled.connect(self.toggle_time_range)
         self.ui.cb_character_list.currentIndexChanged.connect(self.index_change_current_character)
         self.ui.btn_remove_char.clicked.connect(self.clicked_remove_char)
+        self.ui.btn_add_new_char.clicked.connect(self.clicked_add_new_char)
 
         # Animation Tab
         self.ui.chk_use_clip.toggled.connect(self.toggle_use_clip)
 
         # Character Tab
-        self.ui.btn_add_new_char.clicked.connect(self.clicked_add_new_char)
         self.ui.btn_set_name.clicked.connect(self.clicked_set_name)
         self.ui.btn_set_root.clicked.connect(self.clicked_set_selected_as_root)
         self.ui.btn_select_root.clicked.connect(self.clicked_select_current_root)

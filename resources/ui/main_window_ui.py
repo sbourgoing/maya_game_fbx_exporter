@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\exo_s\Documents\GitHub\maya_game_fbx_exporter\resources\ui\main_window_ui.ui'
 #
-# Created: Sat Nov  9 23:19:09 2019
+# Created: Sat Nov  9 23:36:45 2019
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -41,11 +41,12 @@ class Ui_win_maya_game_fbx_exporter(object):
         self.cb_character_list.setEditable(False)
         self.cb_character_list.setObjectName("cb_character_list")
         self.horizontalLayout_5.addWidget(self.cb_character_list)
+        self.btn_add_new_char = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_add_new_char.setObjectName("btn_add_new_char")
+        self.horizontalLayout_5.addWidget(self.btn_add_new_char)
         self.btn_remove_char = QtWidgets.QPushButton(self.centralwidget)
         self.btn_remove_char.setObjectName("btn_remove_char")
         self.horizontalLayout_5.addWidget(self.btn_remove_char)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem)
         self.verticalLayout_4.addLayout(self.horizontalLayout_5)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
@@ -63,9 +64,6 @@ class Ui_win_maya_game_fbx_exporter(object):
         self.tab_char.setObjectName("tab_char")
         self.verticalLayout_13 = QtWidgets.QVBoxLayout(self.tab_char)
         self.verticalLayout_13.setObjectName("verticalLayout_13")
-        self.btn_add_new_char = QtWidgets.QPushButton(self.tab_char)
-        self.btn_add_new_char.setObjectName("btn_add_new_char")
-        self.verticalLayout_13.addWidget(self.btn_add_new_char)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.lbl_edit_char_name = QtWidgets.QLabel(self.tab_char)
@@ -226,8 +224,8 @@ class Ui_win_maya_game_fbx_exporter(object):
         self.rdo_time_start_end.setChecked(False)
         self.rdo_time_start_end.setObjectName("rdo_time_start_end")
         self.horizontalLayout.addWidget(self.rdo_time_start_end)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -259,8 +257,8 @@ class Ui_win_maya_game_fbx_exporter(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.verticalLayout_3.addWidget(self.grp_anim_time)
         self.horizontalLayout_4.addLayout(self.verticalLayout_3)
-        spacerItem2 = QtWidgets.QSpacerItem(200, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem2)
+        spacerItem1 = QtWidgets.QSpacerItem(200, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.tbl_subanims = QtWidgets.QTableWidget(self.grp_anim)
         self.tbl_subanims.setEnabled(True)
@@ -322,8 +320,8 @@ class Ui_win_maya_game_fbx_exporter(object):
     def retranslateUi(self, win_maya_game_fbx_exporter):
         win_maya_game_fbx_exporter.setWindowTitle(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Maya Game Fbx Exporter", None, -1))
         self.lbl_character_name.setText(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Character Name:", None, -1))
-        self.btn_remove_char.setText(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Remove Charatcer", None, -1))
         self.btn_add_new_char.setText(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Add New Character", None, -1))
+        self.btn_remove_char.setText(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Remove Charatcer", None, -1))
         self.lbl_edit_char_name.setText(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Current Name:", None, -1))
         self.btn_set_name.setText(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Set Name", None, -1))
         self.lbl_root_node.setText(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Current Root Node", None, -1))
@@ -333,7 +331,7 @@ class Ui_win_maya_game_fbx_exporter(object):
         self.btn_add_sk.setText(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Add Selected As SkeletalMesh", None, -1))
         self.btn_remove_sk.setText(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Remove List Selection Skeletal Mesh", None, -1))
         self.btn_sel_all_sk.setText(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Select All Skeletal Mesh", None, -1))
-        self.tab_tools.setTabText(self.tab_tools.indexOf(self.tab_char), QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Character Setup", None, -1))
+        self.tab_tools.setTabText(self.tab_tools.indexOf(self.tab_char), QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Character Info", None, -1))
         self.grp_export.setTitle(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Export Options", None, -1))
         self.chk_root_no_parent.setToolTip(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Will Unparent if needed", None, -1))
         self.chk_root_no_parent.setText(QtWidgets.QApplication.translate("win_maya_game_fbx_exporter", "Ensure Root Joint Have Not Parent", None, -1))

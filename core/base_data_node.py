@@ -29,3 +29,12 @@ class BaseDataNode(object):
         """
 
         raise NotImplementedError('Validation functionality is needed for export data node network')
+
+    '''
+    def __getNetworkName__(self):
+        """
+        Determine the name of the maya network.
+        Override this to customize.
+        Returns: The desired network name for this instance.
+        """
+    '''

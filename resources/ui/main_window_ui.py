@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\exo_s\Documents\GitHub\maya_game_fbx_exporter\resources\ui\main_window_ui.ui'
 #
-# Created: Sat Nov  9 19:57:55 2019
+# Created: Sat Nov  9 23:19:09 2019
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -122,6 +122,8 @@ class Ui_win_maya_game_fbx_exporter(object):
         self.horizontalLayout_9.addWidget(self.btn_sel_all_sk)
         self.verticalLayout_12.addLayout(self.horizontalLayout_9)
         self.lst_sk = QtWidgets.QListWidget(self.groupBox)
+        self.lst_sk.setAlternatingRowColors(True)
+        self.lst_sk.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.lst_sk.setObjectName("lst_sk")
         self.verticalLayout_12.addWidget(self.lst_sk)
         self.verticalLayout_13.addWidget(self.groupBox)

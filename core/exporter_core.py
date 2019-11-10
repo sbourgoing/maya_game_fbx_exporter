@@ -30,12 +30,11 @@ class GameFbxExporterCore(object):
         :return: The new CharacterDataNode
         """
 
+        if not self.check_root_node_validation(root_node):
+            return None
+
         # Ensure the root is not already used by another character
         for char in self.character_nodes:
-            if char.root_node == root_node:
-                log.error('Root node {0} is already used by another character {1}. '
-                          'Please choose another root node'.format(root_node, char.character_name))
-                return None
             if char.character_name == name:
                 log.error('Character named {0} already exist. Please choose another name'.format(name))
                 return None
@@ -49,6 +48,42 @@ class GameFbxExporterCore(object):
         libSerialization.export_network(new_char)
 
         return new_char
+
+    def check_root_node_validation(self, root_node):
+        """
+        Additionnal check done over the root selection to prevent reusing the same node in a scene for
+        multiple character
+
+        :param root_node: The potential root node to validate
+        :return:
+        """
+
+        # TODO - Improve validation
+        for char in self.character_nodes:
+            if char.root_node == root_node:
+                log.error('Root node {0} is already used by another character {1}. '
+                          'Please choose another root node'.format(root_node, char.character_name))
+                return False
+        return True
+
+    def remove_character(self, char_node):
+        """
+        Remove the character node pass in param from the scene and the list of available character
+
+        :param char_node: The character node to remove
+        :return:
+        """
+
+        #TODO - Ensure to clean all the data with further dev
+
+        try:
+            network = char_node._network
+            if network and network.exists():
+                pymel.delete(network)
+        except AttributeError:
+            pass
+
+        self.character_nodes.remove(char_node)
 
     def find_data_network(self):
         """

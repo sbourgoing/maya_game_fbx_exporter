@@ -205,7 +205,14 @@
             </layout>
            </item>
            <item>
-            <widget class="QListWidget" name="lst_sk"/>
+            <widget class="QListWidget" name="lst_sk">
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::ExtendedSelection</enum>
+             </property>
+            </widget>
            </item>
           </layout>
           <zorder></zorder>

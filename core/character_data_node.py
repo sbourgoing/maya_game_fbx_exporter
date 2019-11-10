@@ -46,6 +46,8 @@ class CharacterDataNode(BaseDataNode):
         :return: True or False depending of if the new root is a valid one
         """
 
+        # TODO - Improve validation
+
         if pymel.general.nodeType(new_root) != 'joint':
             log.warning("Can't set root joint if this is not a joint type node ({0})".format(new_root))
             return False
@@ -58,7 +60,10 @@ class CharacterDataNode(BaseDataNode):
         Add mesh node to the list of meshes used by this character
 
         :param meshes: List of the different meshes to add
+        :return: True if an update have been made
         """
+
+        need_update = False
 
         for sel in meshes:
             # at the moment, we support only mesh type node, so we need to ensure we have the too shape type
@@ -70,10 +75,15 @@ class CharacterDataNode(BaseDataNode):
 
             if pymel.general.nodeType(shape) != 'mesh':
                 log.warning("Can't add skeletal mesh if the current node doesn't have a a mesh shape ({0})".format(sel))
-                break
+                continue
+
             if not shape.listConnections(t='skinCluster'):
                 log.warning("Can't add skeletal mesh if not skin is connected on it ({0})".format(sel))
-                break
+                continue
+
             # TODO - Possibly add a check to ensure that the skin joints match the root hierarchy
             if not sel in self.skeletal_meshes:
                 self.skeletal_meshes.append(sel)
+                need_update = True
+
+        return need_update

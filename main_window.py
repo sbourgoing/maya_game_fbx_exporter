@@ -23,7 +23,7 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
     Main window of the export tool
     """
     def __init__(self, parent=None):
-        super(GameFbxExporterUi, self).__init__()
+        super(GameFbxExporterUi, self).__init__(parent)
 
         self.cur_char = None # Current selected character information
 
@@ -41,6 +41,7 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
         self.ui.action_sel_data_network.triggered.connect(self.trig_action_select_data_network)
         self.ui.rdo_time_slider.toggled.connect(self.toggle_time_range)
         self.ui.cb_character_list.currentIndexChanged.connect(self.index_change_current_character)
+        self.ui.btn_remove_char.clicked.connect(self.clicked_remove_char)
 
         # Animation Tab
         self.ui.chk_use_clip.toggled.connect(self.toggle_use_clip)
@@ -79,11 +80,13 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
                     self.ui.cb_character_list.addItem(char.character_name)
                 self.ui.cb_character_list.setCurrentIndex(char_index)
                 self.ui.cb_character_list.setEnabled(True)
+                self.ui.btn_remove_char.setEnabled(True)
                 self.update_ui_character(True, char_index)
                 self.update_ui_animation(True, char_index)
             else:
                 self.ui.cb_character_list.addItem('No Character Found')
                 self.ui.cb_character_list.setEnabled(False)
+                self.ui.btn_remove_char.setEnabled(False)
                 self.update_ui_character(False, char_index)
                 self.update_ui_animation(False, char_index)
         else:
@@ -112,9 +115,13 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
         # If the node is referenced, prevent the user to modified the current character
         if is_valid:
             self.cur_char = self._core.character_nodes[char_index]
+            if self.cur_char._network.isReferenced():
+                self.ui.btn_remove_char.setEnabled(False)
             update_data = True
             if self.cur_char._network.isReferenced():
                 is_valid = False
+
+        if is_valid:
             # Enable Ui Element
             self.ui.lbl_edit_char_name.setEnabled(True)
             self.ui.le_char_name.setEnabled(True)
@@ -126,7 +133,14 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
             self.ui.btn_add_sk.setEnabled(True)
             self.ui.btn_remove_sk.setEnabled(True)
             self.ui.btn_sel_all_sk.setEnabled(True)
-            self.ui.lst_sk.setEnabled(False)
+            if self.cur_char.skeletal_meshes:
+                self.ui.lst_sk.setEnabled(True)
+                self.ui.btn_remove_sk.setEnabled(True)
+                self.ui.btn_sel_all_sk.setEnabled(True)
+            else:
+                self.ui.lst_sk.setEnabled(False)
+                self.ui.btn_remove_sk.setEnabled(False)
+                self.ui.btn_sel_all_sk.setEnabled(False)
         else:
             # Disable Ui Element
             self.ui.lbl_edit_char_name.setEnabled(False)
@@ -186,6 +200,24 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
 
         return new_char_name
 
+    def root_node_selection_validation(self):
+        """
+        Ensure the current selection in the scene can be use as a root node candidate
+        :return: True or False depending of the validation
+        """
+
+        error_msg = "You need to select only ONE valid root node (must be a joint type node) " \
+                    "before adding a new character"
+        # Ensure valid root node is valid before adding the new character
+        if len(pymel.selected()) != 1:
+            log.error(error_msg)
+            return False
+        if pymel.general.nodeType(pymel.selected()[0]) != 'joint':
+            log.error(error_msg)
+            return False
+
+        return True
+
     #
     ## Ui connection function
     #
@@ -199,6 +231,14 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
         if not self._no_cb_char_update:
             self.update_ui(new_index, clear=False)
 
+    def clicked_remove_char(self):
+        """
+        Remove all the current character data from the scene and update the ui
+        :return:
+        """
+        self._core.remove_character(self.cur_char)
+        self.update_ui()
+
 
     # Character Tab ui elements signal functions
 
@@ -208,14 +248,7 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
         :return:
         """
 
-        error_msg = "You need to select only ONE valid root node (must be a joint type node) " \
-                    "before adding a new character"
-        # Ensure valid root node is valid before adding the new character
-        if len(pymel.selected()) != 1:
-            log.error(error_msg)
-            return
-        if pymel.general.nodeType(pymel.selected()[0]) != 'joint':
-            log.error(error_msg)
+        if not self.root_node_selection_validation():
             return
 
         root = pymel.selected()[0]
@@ -224,7 +257,6 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
 
         if new_char_name:
             new_char = self._core.setup_new_character(new_char_name, root)
-            # self.ui.cb_character_list.setCurrentIndex(len(self._core.character_nodes) - 1)
             self.update_ui(len(self._core.character_nodes) - 1)
 
     def clicked_set_name(self):
@@ -233,7 +265,6 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
 
         :return:
         """
-
         new_name = self.set_char_name()
 
         if new_name:
@@ -242,16 +273,49 @@ class GameFbxExporterUi(QtWidgets.QMainWindow):
             self.update_ui(self.ui.cb_character_list.currentIndex())
 
     def clicked_set_selected_as_root(self):
-        raise NotImplementedError()
+        """
+        Change the root of the selected character for the selected node. The node need to be single selected and
+        pass the validation of the character node
+        :return:
+        """
+
+        if not self.root_node_selection_validation():
+            return
+
+        new_root = pymel.selected()[0]
+        if self._core.check_root_node_validation(new_root):
+            self.cur_char.set_root_node(new_root)
+            self._core.save_data_network(self.cur_char)
+            self.update_ui(self.ui.cb_character_list.currentIndex(), clear=False)
 
     def clicked_select_current_root(self):
-        raise NotImplementedError()
+        """
+        Select, in the scene, the current character root joint
+        :return:
+        """
+        pymel.select(self.cur_char.root_node)
 
     def clicked_add_selected_as_skel_mesh(self):
-        raise NotImplementedError()
+        """
+        Add the selected scene node as skeletal mesh to export with the character. Those node need to pass
+        validation before
+        :return:
+        """
+
+        # TODO - Add core check with other character to prevent addition of same mesh in multiple character
+        if self.cur_char.add_skeletal_mesh(pymel.selected()):
+            self._core.save_data_network(self.cur_char)
+            self.update_ui(self.ui.cb_character_list.currentIndex(), clear=False)
+
 
     def clicked_remove_list_selected_as_skel_mesh(self):
-        raise NotImplementedError()
+        """
+        Remove the selected mesh in the list from the mesh to export with the character
+        :return:
+        """
+
+        for list_sel in self.ui.lst_sk.selectedItems():
+            pass
 
     def clicked_select_all_skel_mesh(self):
         raise NotImplementedError()
